@@ -5,7 +5,9 @@ const FIFTHS = [
 const FIELD_DEFS = {
     MajorName: idx => `${FIFTHS[idx]}`,
     RelMinorName: idx => `${FIFTHS[idx + 3]}`,
-    Signature: idx => `<img src="${FIFTHS[idx]}_sig.png">`
+    Signature: idx => `<img src="${FIFTHS[idx]}_sig.png">`,
+    Major_V: idx => `${FIFTHS[idx + 1]}`,
+    Major_IV: idx => `${FIFTHS[idx - 1]}`
 }
 
 const fields = Object.keys(FIELD_DEFS);
