@@ -7,6 +7,8 @@ Run the tool:
 
     node build-notes.js
 
+Create a deck for the cards. In the deck options, set Order to "Show new cards in random order", and disable "Bury related cards until the next day" (otherwise you will only see one type of card each day).
+
 Create a note type in Anki with the required fields (displayed by the tool) and whatever cards you want.
 
 Copy the files in `./media` into the `collection.media` directory within the [Anki data directory](https://apps.ankiweb.net/docs/manual.html#files).
