@@ -5,6 +5,8 @@ const writeImages = true;
 const notes = ['A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab'];
 const strings = ['A', 'E', 'C', 'G'];
 
+console.log('Fields required by note type: Front; Back');
+
 const stream = require('fs').createWriteStream('ukulele-fretboard.txt');
 stream.write('# Front; Back\n')
 
