@@ -10,10 +10,8 @@ console.log('Fields required by note type: Front; Back');
 const stream = require('fs').createWriteStream('ukulele-fretboard.txt');
 stream.write('# Front; Back\n')
 
-// Lower fretboard
-writeCards(stream, 'lower', 0, 5);
-// Upper fretboard
-writeCards(stream, 'upper', 6, 11);
+// Full fretboard
+writeCards(stream, 'all', 0, 11);
 
 stream.end();
 console.log('Done');
@@ -56,8 +54,18 @@ function writeImage(filename, fingerings) {
         return;
     }
     process.stdout.write('.');
-    const params = fingerings.map(({string, fret}) => `${string + 1}-${fret || 'o'}`).join(';');
-    const lily = `\\markup { \\fret-diagram #"w:4;${params};" }`;
+    // Draw the fret number inside the dot (where the finger number usually is).
+    const placeFrets = fingerings.map(({string, fret}) =>
+        fret ? `(place-fret ${string + 1} ${fret} ${fret})` : `(open ${string + 1})`).join('\n');
+    // White fret on 1st fret of (invisible) 5th string ensures that the full fretboard is drawn.
+    const lily = `
+    \\markup {
+      \\override #'(fret-diagram-details . ((string-count . 4) (finger-code . in-dot)))
+      \\fret-diagram-verbose #'(
+        (place-fret 5 1 white)
+        ${placeFrets}
+      )
+    }`;
     fs.writeFileSync('/tmp/in.ly', lily);
     execFileSync('lilypond',
         ['-dpreview', '-dno-print-pages', '-dresolution=500', '-o', '/tmp/lilyout', '/tmp/in.ly'],
