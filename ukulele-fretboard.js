@@ -2,6 +2,7 @@ const fs = require('fs');
 const execFileSync = require('child_process').execFileSync;
 
 const writeImages = true;
+const allNoteCards = false;
 const notes = ['A', 'A#/Bb', 'B', 'C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab'];
 const strings = ['A', 'E', 'C', 'G'];
 
@@ -11,12 +12,12 @@ const stream = require('fs').createWriteStream('ukulele-fretboard.txt');
 stream.write('# Front; Back\n')
 
 // Full fretboard
-writeCards(stream, 'all', 0, 11);
+writeCards(stream, 0, 11);
 
 stream.end();
 console.log('Done');
 
-function writeCards(stream, rangeName, lowerFret, upperFret) {
+function writeCards(stream, lowerFret, upperFret) {
     const cards = [];
     const fingeringsByNote = new Map();
     // Write cards for fretboard -> note name.
@@ -30,15 +31,18 @@ function writeCards(stream, rangeName, lowerFret, upperFret) {
             const filename = `uke_${string}_${fret}.png`;
             writeImage(`media/${filename}`, [{string, fret}]);
             // Front; Back
-            stream.write(`<img src="${filename}">; ${note} (${rangeName})\n`);
+            stream.write(`<img src="${filename}">; ${note}\n`);
+            stream.write(`${note} ${nth(string + 1)} string; <img src="${filename}">\n`);
         }
     }
-    // Write cards for note name -> fretboard.
-    for ([note, fingerings] of fingeringsByNote) {
-        const filename = `uke_${note.replace(/\//g, '')}_${rangeName}.png`;
-        writeImage(`media/${filename}`, fingerings);
-        // Front; Back
-        stream.write(`${note} (${rangeName}); <img src="${filename}">\n`);
+    if (allNoteCards) {
+        // Write cards for note name -> fretboard.
+        for ([note, fingerings] of fingeringsByNote) {
+            const filename = `uke_${note.replace(/\//g, '')}.png`;
+            writeImage(`media/${filename}`, fingerings);
+            // Front; Back
+            stream.write(`${note}; <img src="${filename}">\n`);
+        }
     }
 }
 
@@ -71,4 +75,17 @@ function writeImage(filename, fingerings) {
         ['-dpreview', '-dno-print-pages', '-dresolution=500', '-o', '/tmp/lilyout', '/tmp/in.ly'],
         {stdio: 'ignore'});
     fs.renameSync('/tmp/lilyout.preview.png', filename);
+}
+
+function nth(num) {
+    switch (num) {
+        case 1:
+            return '1st';
+        case 2:
+            return '2nd';
+        case 3:
+            return '3rd';
+        default:
+            return `${num}th`;
+    }
 }
